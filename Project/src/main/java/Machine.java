@@ -8,6 +8,7 @@ public class Machine {
 
     public Machine(int id) {
         this.id = id;
+        operations = new ArrayList<Operation>();
     }
 
     public ArrayList<Operation> getOperations() {

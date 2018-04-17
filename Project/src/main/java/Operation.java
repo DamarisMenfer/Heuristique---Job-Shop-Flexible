@@ -5,14 +5,16 @@ import java.util.Hashtable;
 public class Operation {
 
     private int id;
+    private int idJob;
 
-    private int dateDeDebut;                            //Plus tôt.
+    private int dateDeDebut;                            //Plus tôt (dependant du choix des machines).
 
     private HashMap<Machine,Integer> machines;
 
-    public Operation(int id, int dateDeDebut) {
+    public Operation(int id, int idJob) {
         this.id = id;
-        this.dateDeDebut = dateDeDebut;
+        this.idJob = idJob;
+        machines = new HashMap<Machine, Integer>();
     }
 
     public void addMachines(Integer temps, Machine machine) {
@@ -21,6 +23,10 @@ public class Operation {
 
     public HashMap<Machine, Integer> getMachines() {
         return machines;
+    }
+
+    public int getDurationByMachine(Machine machine){
+        return machines.get(machine);
     }
 
     public int getId() {

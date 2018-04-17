@@ -8,6 +8,7 @@ public class Job {
 
     public Job(int id) {
         this.id = id;
+        operations = new ArrayList<Operation>();
     }
 
     public void addOperations(Operation operations) {
