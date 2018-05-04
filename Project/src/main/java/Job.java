@@ -28,10 +28,12 @@ public class Job {
     }
 
     public void actualiseOperationsTime(){
-        int deboutProchaineOperation = 0;
-        for(int i = 0; i < operations.size(); i++){
-            operations.get(i).setDateDeDebut(deboutProchaineOperation);
-            deboutProchaineOperation += operations.get(i).getDuration();
+        int deboutProchaineOperation = operations.get(0).getDateDeDebut();
+        for(Operation operation:operations){
+            if(operation.getDateDeDebut() < deboutProchaineOperation) {
+                operation.setDateDeDebut(deboutProchaineOperation);
+            }
+            deboutProchaineOperation = operation.getDateDeDebut() + operation.getDuration();
         }
     }
 

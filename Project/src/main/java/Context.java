@@ -35,11 +35,21 @@ public class Context {
     }
 
     public void printContext(){
-        for (int i = 0; i < jobs.size(); i++){
-            System.out.println("Job: "+jobs.get(i).getId());
+        for (Job job:jobs){
+            System.out.println("Job: "+job.getId());
+            for(Operation operation:job.getOperations()){
+                System.out.println("Operation: " + operation.getId() +
+                                    " DateDeDebout: " + operation.getDateDeDebut() +
+                                    " Duration: " + operation.getDuration() +
+                                    " Machine: " + operation.getChosedMachine().getId());
+            }
         }
-        for (int i = 0; i < jobs.size(); i++){
-            System.out.println("Machine: "+machines.get(i).getId());
+        for (Machine machine:machines){
+            System.out.println("Machine: "+ machine.getId());
+            for(Operation operation:machine.getOperations()){
+                System.out.println("Operation: " + operation.getId() +
+                                    " Job: " + operation.getIdJob());
+            }
         }
 
     }
@@ -54,36 +64,44 @@ public class Context {
         generateMachinesOperationsList();
 
         //See total time.
+        generateSolution();
 
         //Take care: solution not possible. Gerer les conflits dans le ordenance des operations sur le machine.
     }
 
     private void choseMachinesRandom(){
-        for(int i = 0; i < jobs.size(); i++){
-            for (int j = 0; j < jobs.get(i).getOperations().size(); j++){
-                HashMap<Machine,Integer> machinesOp = jobs.get(i).getOperations().get(j).getMachines();
+        for(Job job:jobs){
+            for (Operation operation:job.getOperations()){
+                HashMap<Machine,Integer> machinesOp = operation.getMachines();
                 Random rand = new Random();
                 int pos = rand.nextInt(machinesOp.size());
                 Machine machineChosed = (new ArrayList<Machine>(machinesOp.keySet())).get(pos);
-                jobs.get(i).getOperations().get(j).setChosedMachine(machineChosed);
+                operation.setChosedMachine(machineChosed);
             }
         }
     }
 
     private void actualiseDateDeDebout(){
-        for(int i = 0; i < jobs.size(); i++){
-            jobs.get(i).actualiseOperationsTime();
+        for(Job job:jobs){
+            job.actualiseOperationsTime();
         }
     }
 
     private void generateMachinesOperationsList(){
-        for(int i = 0; i < jobs.size(); i++){
-            for (int j = 0; j < jobs.get(i).getOperations().size(); j++){
-                jobs.get(i).getOperations().get(j).getChosedMachine().addOperations(jobs.get(i).getOperations().get(j));
+        for(Job job:jobs){
+            for (Operation operation:job.getOperations()){
+                operation.getChosedMachine().addOperations(operation);
             }
         }
-        for(int i = 0; i < machines.size(); i++){
-            machines.get(i).orderListOperations();
+        for(Machine machine:machines){
+            machine.orderListOperations();
         }
+        for(Job job:jobs){
+            job.actualiseOperationsTime();
+        }
+    }
+
+    private void generateSolution(){
+        printContext();
     }
 }

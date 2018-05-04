@@ -34,6 +34,13 @@ public class Machine {
 
     public void orderListOperations(){
         Collections.sort(operations);
-
+        int dateDeDeboutActualised = 0;
+        for(Operation operation:operations){
+            if(dateDeDeboutActualised < operation.getDateDeDebut()){
+                dateDeDeboutActualised = operation.getDateDeDebut();
+            }
+            operation.setDateDeDebut(dateDeDeboutActualised);
+            dateDeDeboutActualised += operation.getDuration();
+        }
     }
 }

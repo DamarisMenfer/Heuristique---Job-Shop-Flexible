@@ -18,6 +18,7 @@ public class Operation implements Comparable<Operation>{
     public Operation(int id, int idJob) {
         this.id = id;
         this.idJob = idJob;
+        this.dateDeDebut = 0;
         machines = new LinkedHashMap<Machine, Integer>();
     }
 
