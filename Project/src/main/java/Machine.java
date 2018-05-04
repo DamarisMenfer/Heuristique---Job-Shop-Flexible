@@ -1,4 +1,9 @@
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Collection.*;
 
 public class Machine {
 
@@ -25,5 +30,10 @@ public class Machine {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void orderListOperations(){
+        Collections.sort(operations);
+
     }
 }

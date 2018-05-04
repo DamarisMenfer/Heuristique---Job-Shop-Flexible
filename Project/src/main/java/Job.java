@@ -26,4 +26,13 @@ public class Job {
     public void setId(int id) {
         this.id = id;
     }
+
+    public void actualiseOperationsTime(){
+        int deboutProchaineOperation = 0;
+        for(int i = 0; i < operations.size(); i++){
+            operations.get(i).setDateDeDebut(deboutProchaineOperation);
+            deboutProchaineOperation += operations.get(i).getDuration();
+        }
+    }
+
 }
