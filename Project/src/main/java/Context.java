@@ -2,8 +2,8 @@ import java.util.*;
 
 public class Context {
 
-    List<Job> jobs;
-    List<Machine> machines;
+    private List<Job> jobs;
+    private List<Machine> machines;
 
     public Context() {
         jobs = new ArrayList<Job>();
@@ -47,10 +47,42 @@ public class Context {
         for (Machine machine:machines){
             System.out.println("Machine: "+ machine.getId());
             for(Operation operation:machine.getOperations()){
-                System.out.println("Operation: " + operation.getId() +
-                                    " Job: " + operation.getIdJob());
+                System.out.println("Job: " + operation.getIdJob() +
+                                    " Operation: " + operation.getId());
             }
         }
+    }
+
+    public void printSolution(){
+        printMachineAssignement();
+        printOperationSequence();
+    }
+
+    private void printMachineAssignement (){
+        System.out.print("MA: (");
+        for (Job job: jobs){
+            for (Operation op: job.getOperations()) {
+                System.out.print(op.getChosedMachine().getId()+", ");
+            }
+            System.out.print("|");
+        }
+        System.out.print(")\n");
+    }
+
+    private void printOperationSequence(){
+        System.out.print("OS: (");
+        ArrayList<Operation> os = new ArrayList<Operation>();
+        for (Job job: jobs){
+            for (Operation op: job.getOperations()){
+                os.add(op);
+            }
+        }
+
+        Collections.sort(os);
+        for (Operation op: os){
+            System.out.print(op.getIdJob() + ", ");
+        }
+        System.out.print(")\n");
 
     }
 
@@ -62,11 +94,10 @@ public class Context {
         actualiseDateDeDebout();
         //put choices in machine op list (ordered by date de debout plut tot).
         generateMachinesOperationsList();
-
         //See total time.
         generateSolution();
-
         //Take care: solution not possible. Gerer les conflits dans le ordenance des operations sur le machine.
+        printSolution();
     }
 
     private void choseMachinesRandom(){
