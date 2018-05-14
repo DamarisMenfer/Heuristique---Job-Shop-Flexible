@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 
 public class Operation implements Comparable<Operation>{
@@ -72,6 +69,14 @@ public class Operation implements Comparable<Operation>{
         int result;
         if (this.getDateDeDebut() < operationCompare.getDateDeDebut()) {
             result = -1;
+        }
+        else if (this.getDateDeDebut() == operationCompare.getDateDeDebut()) {
+            if (this.duration < operationCompare.duration) {
+                result = -1;
+            }
+            else{
+                result = 0;
+            }
         }
         else{
             result = 0;
