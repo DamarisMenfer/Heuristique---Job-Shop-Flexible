@@ -83,4 +83,8 @@ public class Operation implements Comparable<Operation>{
         }
         return result;
     }
+
+    public String toString(){
+        return this.idJob+","+this.id;
+    }
 }
