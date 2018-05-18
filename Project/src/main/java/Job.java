@@ -27,6 +27,10 @@ public class Job {
         this.id = id;
     }
 
+    public String toString(){
+        return String.valueOf(id);
+    }
+
     public void actualiseOperationsTime(){
         int deboutProchaineOperation = operations.get(0).getDateDeDebut();
         for(Operation operation:operations){
