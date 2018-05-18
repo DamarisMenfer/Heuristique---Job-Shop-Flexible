@@ -34,6 +34,10 @@ public class Machine {
 
     public void orderListOperations(){
         Collections.sort(operations);
+        actualiseDateDeDeboutOperations();
+    }
+
+    public void actualiseDateDeDeboutOperations(){
         int dateDeDeboutActualised = 0;
         for(Operation operation:operations){
             if(dateDeDeboutActualised < operation.getDateDeDebut()){
@@ -42,5 +46,9 @@ public class Machine {
             operation.setDateDeDebut(dateDeDeboutActualised);
             dateDeDeboutActualised += operation.getDuration();
         }
+    }
+
+    public void deleteOperationFromList(Operation op){
+        operations.remove(op);
     }
 }
