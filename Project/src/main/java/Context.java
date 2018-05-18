@@ -103,12 +103,12 @@ public class Context {
 
         createGraph();
         //test create graph
-        System.out.println(graph.toString());
+        System.out.println("graph : " +graph.toString());
 
         //calculate total time
         calculateTotalTime();
     }
-    
+
     private void choseMachinesRandom(){
         for(Job job:jobs){
             for (Operation operation:job.getOperations()){
@@ -198,7 +198,6 @@ public class Context {
         Edge edge;
 
         if (node.getId() == 0){
-
             return 0;
         }
         else {
@@ -227,5 +226,113 @@ public class Context {
 
     private void generateSolution(){
         printContext();
+    }
+
+    public boolean generateNeighbour(){
+        Random rand = new Random();
+        //int choice = rand.nextInt(1);
+        int choice = 0;
+        switch (choice){
+            case 1:
+                Operation opChanged = changeOneMachine();
+                if(opChanged == null){
+                    System.out.print("Not a neighbour");
+                    return false;
+                }
+                else {
+                    actualiseDateDeDebout();
+                    actualiseMachinesOperationList(opChanged);
+                    proccess();
+                    return true;
+                }
+            default:
+                Machine machineChoosed = chooseMachineToChange();
+                swapElementsInOperationList(machineChoosed);
+                proccess();
+                return true;
+        }
+    }
+
+    private void proccess (){
+        generateSolution();
+        //Take care: solution not possible. Gerer les conflits dans le ordenance des operations sur le machine.
+        //display solution as the form mentioned in the subject
+        printSolution();
+
+        createGraph();
+        //test create graph
+        //System.out.println(graph.toString());
+
+        //calculate total time
+        calculateTotalTime();
+    }
+
+    public Context createClone(){
+        Context newContext = new Context();
+        newContext = this;
+        return newContext;
+    }
+
+    private Operation changeOneMachine() {
+        for(Job job:jobs){
+            for (Operation operation:job.getOperations()){
+                HashMap<Machine,Integer> machinesOp = operation.getMachines();
+                Random rand = new Random();
+                int pos = rand.nextInt(machinesOp.size());
+                Machine machineChosed = (new ArrayList<Machine>(machinesOp.keySet())).get(pos);
+                if (operation.getChosedMachine() != machineChosed){
+                    operation.setChosedMachine(machineChosed);
+                    return operation;
+                }
+
+            }
+        }
+        return null;
+    }
+
+    private void actualiseMachinesOperationList(Operation opChanged){
+        for(Machine machine:machines){
+            for(Operation op:machine.getOperations()){
+                if (op == opChanged){
+                    machine.deleteOperationFromList(opChanged);
+                }
+            }
+        }
+        opChanged.getChosedMachine().addOperations(opChanged);
+        opChanged.getChosedMachine().orderListOperations();
+        for(Job job:jobs){
+            job.actualiseOperationsTime();
+        }
+    }
+
+    private Machine chooseMachineToChange(){
+        Random rand = new Random();
+        int posMachine = rand.nextInt(machines.size());
+        return machines.get(posMachine);
+    }
+
+    private void swapElementsInOperationList(Machine machineSwap){
+
+        Random rand = new Random();
+        ArrayList<Operation> listOperations = machineSwap.getOperations();
+        int posOperation = rand.nextInt(listOperations.size());
+        if(posOperation == 0){
+            posOperation++;
+        }
+        else if(posOperation == listOperations.size()){
+            posOperation--;
+        }
+        Operation temp = listOperations.get(posOperation-1);
+        listOperations.set(posOperation-1, listOperations.get(posOperation));
+        listOperations.set(posOperation, temp);
+
+        for(Machine machine:machines){
+            machine.actualiseDateDeDeboutOperations();
+        }
+
+        for(Job job:jobs){
+            job.actualiseOperationsTime();
+        }
+
     }
 }
