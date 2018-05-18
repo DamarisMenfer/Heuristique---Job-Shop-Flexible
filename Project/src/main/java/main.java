@@ -18,6 +18,20 @@ public class main {
 
         context.findSolution();
 
+        //TODO
+        //while(better)
+        //List[10] neighbours;
+
+        //for 10
+        Context createContext;
+        createContext = context.createClone();
+        createContext.generateNeighbour();
+
+        //neighbourContext = context.generateNeighbour()
+        //add neighbours(neighbourContext);
+        //chooseBestNeighbour();
+
+
     }
 
 
