@@ -1,21 +1,28 @@
 import java.util.*;
 
-public class Context {
+public class Context implements Comparable<Context>, Cloneable {
 
-    private List<Job> jobs;
-    private List<Machine> machines;
+    private ArrayList<Job> jobs;
+    private ArrayList<Machine> machines;
     private Graph graph;
+    private Integer totalTime;
 
     public Context() {
-        jobs = new ArrayList<Job>();
-        machines = new ArrayList<Machine>();
-        graph = new Graph();
+        this.jobs = new ArrayList<Job>();
+        this.machines = new ArrayList<Machine>();
+        this.graph = new Graph();
+    }
+
+    public Context(ArrayList<Job> initialJobs, ArrayList<Machine> initialMachines, Graph initialGraph) {
+        this.jobs = initialJobs;
+        this.machines = initialMachines;
+        this.graph = initialGraph;
     }
 
     /*
      * setter getter
      */
-    public List<Job> getJobs() {
+    public ArrayList<Job> getJobs() {
         return jobs;
     }
 
@@ -27,7 +34,7 @@ public class Context {
         this.jobs.add(job);
     }
 
-    public List<Machine> getMachines() {
+    public ArrayList<Machine> getMachines() {
         return machines;
     }
 
@@ -39,6 +46,14 @@ public class Context {
         this.machines.add(machine);
     }
 
+    public Graph getGraph() {
+        return this.graph;
+    }
+
+    public Integer getTotalTime() {
+        return totalTime;
+    }
+
     //************************************************
 
     /*
@@ -48,10 +63,10 @@ public class Context {
         //chose machines to use.
         choseMachinesRandom();
         //Actualise datedeDebout plus tot Operation.
-        actualiseDateDeDebout();
+        actualiseDateDeDebut();
         //put choices in machine op list (ordered by date de debout plut tot).
         generateMachinesOperationsList();
-        generateSolution();
+        printContext();
         //Take care: solution not possible. Gerer les conflits dans le ordenance des operations sur le machine.
         //display solution as the form mentioned in the subject
         printSolution();
@@ -62,6 +77,7 @@ public class Context {
 
         //calculate total time
         calculateTotalTime();
+        System.out.println(this.getTotalTime());
     }
 
     private void choseMachinesRandom(){
@@ -76,7 +92,7 @@ public class Context {
         }
     }
 
-    private void actualiseDateDeDebout(){
+    private void actualiseDateDeDebut(){
         for(Job job:jobs){
             job.actualiseOperationsTime();
         }
@@ -96,8 +112,19 @@ public class Context {
         }
     }
 
-    private void generateSolution(){
+    private void proccess (){
+
+        //Take care: solution not possible. Gerer les conflits dans le ordenance des operations sur le machine.
+        //display solution as the form mentioned in the subject
+        //printSolution();
         printContext();
+        createGraph();
+        //test create graph
+        System.out.println(graph.toString());
+        printSolution();
+        //calculate total time
+        calculateTotalTime();
+        System.out.println(this.getTotalTime());
     }
 
     //************************************************
@@ -107,6 +134,7 @@ public class Context {
      */
 
     public boolean generateNeighbour(){
+        System.out.println("------------generate Neighbour------------\n");
         Random rand = new Random();
         //int choice = rand.nextInt(1);
         int choice = 0;
@@ -118,7 +146,7 @@ public class Context {
                     return false;
                 }
                 else {
-                    actualiseDateDeDebout();
+                    actualiseDateDeDebut();
                     actualiseMachinesOperationList(opChanged);
                     proccess();
                     return true;
@@ -131,28 +159,8 @@ public class Context {
         }
     }
 
-    private void proccess (){
-        generateSolution();
-        //Take care: solution not possible. Gerer les conflits dans le ordenance des operations sur le machine.
-        //display solution as the form mentioned in the subject
-        printSolution();
-
-        createGraph();
-        //test create graph
-        //System.out.println(graph.toString());
-
-        //calculate total time
-        calculateTotalTime();
-    }
-
-    public Context createClone(){
-        Context newContext = new Context();
-        newContext = this;
-        return newContext;
-    }
-
     private Operation changeOneMachine() {
-        for(Job job:jobs){
+        for(Job job:this.jobs){
             for (Operation operation:job.getOperations()){
                 HashMap<Machine,Integer> machinesOp = operation.getMachines();
                 Random rand = new Random();
@@ -189,6 +197,7 @@ public class Context {
         return machines.get(posMachine);
     }
 
+    //TODO error
     private void swapElementsInOperationList(Machine machineSwap){
 
         Random rand = new Random();
@@ -221,6 +230,7 @@ public class Context {
      */
 
     private void createGraph(){
+        this.graph = new Graph();
         int id = 0;
         Node nodeDebut = new Node (id, null, null);
         Node nodeFin = new Node (-1, null, null);
@@ -297,10 +307,9 @@ public class Context {
         }
     }
 
-    private Integer calculateTotalTime() {
-        Integer res = calculateTime(graph.findNodeById(-1));
-        System.out.println ("total time: " + res);
-        return res;
+    private void calculateTotalTime() {
+        this.totalTime = calculateTime(graph.findNodeById(-1));
+        //System.out.println ("total time: " + this.totalTime);
     }
 
     //************************************************
@@ -359,6 +368,27 @@ public class Context {
         }
         System.out.print(")\n");
 
+    }
+
+    @Override
+    public int compareTo(Context context) {
+        if (this.totalTime < context.totalTime){
+            return -1;
+        }
+        else{
+            return 0;
+        }
+    }
+
+    @Override
+    public Object clone(){
+        Object o = null;
+        try {
+            o = super.clone();
+        } catch(CloneNotSupportedException cnse) {
+            cnse.printStackTrace(System.err);
+        }
+        return o;
     }
 
     //************************************************
