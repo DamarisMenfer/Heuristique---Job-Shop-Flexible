@@ -19,17 +19,23 @@ public class main {
         //TODO
         //while(better)
         //List[10] neighbours;
+        Context neighbourContext;
 
-        //for 10
-        Context createContext;
-        createContext = context.createClone();
-        createContext.generateNeighbour();
-
-        //neighbourContext = context.generateNeighbour()
-        //add neighbours(neighbourContext);
-        //chooseBestNeighbour();
-
-
+        while (true) {
+            neighbourContext = new Context(context.getJobs(), context.getMachines(), context.getGraph());
+            if (!neighbourContext.generateNeighbour()){
+                break;
+            }
+            if (neighbourContext.getTotalTime() < context.getTotalTime()){
+                System.out.println("found new neighbour");
+                System.out.println(neighbourContext.getGraph().toString());
+                System.out.println(neighbourContext.getTotalTime());
+                context = (Context) neighbourContext.clone();
+            }
+        }
+        neighbourContext.printSolution();
+        System.out.println(context.getGraph().toString());
+        System.out.println(context.getTotalTime());
     }
 
 
