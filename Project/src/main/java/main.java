@@ -13,9 +13,7 @@ public class main {
     public static void main(String [] args) {
 
         Context context = new Context();
-
         initializeContext(context);
-
         context.findSolution();
 
         //TODO
