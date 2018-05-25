@@ -2,10 +2,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class main {
 
@@ -14,16 +12,21 @@ public class main {
 
         Context context = new Context();
         initializeContext(context);
-        context.findSolution();
+        context.initialSolution();
 
         //TODO
         //while(better)
         //List[10] neighbours;
-        Context neighbourContext;
+        Context neighbourContext = new Context(context.getJobs(), context.getMachines(), context.getGraph());
+        boolean continue_checking = true;
+        Integer count = 0;
 
-        while (true) {
-            neighbourContext = new Context(context.getJobs(), context.getMachines(), context.getGraph());
+        while (continue_checking && count < 20) {
+            count ++;
+            neighbourContext = (Context) context.clone();
             if (!neighbourContext.generateNeighbour()){
+                System.out.println("fail check neighbour");
+                continue_checking = false;
                 break;
             }
             if (neighbourContext.getTotalTime() < context.getTotalTime()){
@@ -33,6 +36,7 @@ public class main {
                 context = (Context) neighbourContext.clone();
             }
         }
+        System.out.println("*****************************************");
         neighbourContext.printSolution();
         System.out.println(context.getGraph().toString());
         System.out.println(context.getTotalTime());

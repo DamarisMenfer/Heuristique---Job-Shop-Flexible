@@ -4,12 +4,13 @@ public class Node {
     private Integer id;
     private Operation op;
     private ArrayList<Edge> neighbour;
-    private Integer time;
+    private boolean checking;
 
-    public Node (Integer id, Job job, Operation op){
+    public Node (Integer id, Operation op){
         this.id = id;
         this.op = op;
         neighbour = new ArrayList<Edge>();
+        checking = false;
     }
 
     public Integer getId() {
@@ -18,6 +19,14 @@ public class Node {
 
     public Operation getOp() {
         return op;
+    }
+
+    public boolean isChecking() {
+        return checking;
+    }
+
+    public void setChecking(boolean checking) {
+        this.checking = checking;
     }
 
     public ArrayList<Edge> getNeighbour() {
@@ -33,21 +42,13 @@ public class Node {
         return null;
     }
 
-    public Integer getTime() {
-        return time;
-    }
-
-    public void setTime(Integer time) {
-        this.time = time;
-    }
-
     public String toString (){
         String str = this.id+",";
         if (op == null){
             str += null;
         }
         else{
-            str += op.toString() + "*" + op.getDateDeDebut();
+            str += op.toString() + "*" + op.getStartingDate();
         }
         return str;
     }

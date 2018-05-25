@@ -5,17 +5,17 @@ public class Operation implements Comparable<Operation>{
     private int id;
     private int idJob;
 
-    private int dateDeDebut;                            //Plus tôt (dependant du choix des machines).
+    private int startingDate;                            //Plus tôt (dependant du choix des machines).
 
     private LinkedHashMap<Machine,Integer> machines;
 
-    private Machine chosedMachine;
-    private int duration;
+    private Machine chosenMachine;
+    private int processingTime;
 
     public Operation(int id, int idJob) {
         this.id = id;
         this.idJob = idJob;
-        this.dateDeDebut = 0;
+        this.startingDate = 0;
         machines = new LinkedHashMap<Machine, Integer>();
     }
 
@@ -27,10 +27,6 @@ public class Operation implements Comparable<Operation>{
         return machines;
     }
 
-    public int getDurationByMachine(Machine machine){
-        return machines.get(machine);
-    }
-
     public int getIdJob() {
         return idJob;
     }
@@ -39,49 +35,51 @@ public class Operation implements Comparable<Operation>{
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int getStartingDate() {
+        return startingDate;
     }
 
-    public int getDateDeDebut() {
-        return dateDeDebut;
+    public void setStartingDate(int startingDate) {
+        this.startingDate = startingDate;
     }
 
-    public void setDateDeDebut(int dateDeDebut) {
-        this.dateDeDebut = dateDeDebut;
+    public void setChosenMachine(Machine chosenMachine) {
+        this.chosenMachine = chosenMachine;
+        this.processingTime = machines.get(chosenMachine);
     }
 
-    public void setChosedMachine(Machine chosedMachine) {
-        this.chosedMachine = chosedMachine;
-        this.duration = machines.get(chosedMachine);
+    public int getProcessingTime() {
+        return processingTime;
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public Machine getChosedMachine() {
-        return chosedMachine;
+    public Machine getChosenMachine() {
+        return chosenMachine;
     }
 
     @Override
     public int compareTo(Operation operationCompare) {
-        int result;
-        if (this.getDateDeDebut() < operationCompare.getDateDeDebut()) {
-            result = -1;
-        }
-        else if (this.getDateDeDebut() == operationCompare.getDateDeDebut()) {
-            if (this.duration < operationCompare.duration) {
-                result = -1;
+        if (this.idJob == operationCompare.getIdJob()){
+            if (this.id < operationCompare.getId()){
+                return -1;
             }
             else{
-                result = 0;
+                return 0;
+            }
+        }
+        if (this.getStartingDate() < operationCompare.getStartingDate()) {
+            return -1;
+        }
+        else if (this.getStartingDate() == operationCompare.getStartingDate()) {
+            if (this.processingTime < operationCompare.processingTime) {
+                return -1;
+            }
+            else{
+                return 0;
             }
         }
         else{
-            result = 0;
+            return 0;
         }
-        return result;
     }
 
     public String toString(){

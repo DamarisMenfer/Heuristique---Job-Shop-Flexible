@@ -27,13 +27,13 @@ public class Job {
         return String.valueOf(id);
     }
 
-    public void actualiseOperationsTime(){
-        int deboutProchaineOperation = operations.get(0).getDateDeDebut();
+    public void updateOperationTime(){
+        int startingTimeOfNextOperation = operations.get(0).getStartingDate();
         for(Operation operation:operations){
-            if(operation.getDateDeDebut() < deboutProchaineOperation) {
-                operation.setDateDeDebut(deboutProchaineOperation);
+            if(operation.getStartingDate() < startingTimeOfNextOperation) {
+                operation.setStartingDate(startingTimeOfNextOperation);
             }
-            deboutProchaineOperation = operation.getDateDeDebut() + operation.getDuration();
+            startingTimeOfNextOperation = operation.getStartingDate() + operation.getProcessingTime();
         }
     }
 

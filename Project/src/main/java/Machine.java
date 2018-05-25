@@ -1,9 +1,5 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-
-import static java.util.Collection.*;
 
 public class Machine {
 
@@ -28,23 +24,19 @@ public class Machine {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void orderListOperations(){
+    public void sortOperationList(){
         Collections.sort(operations);
-        actualiseDateDeDeboutOperations();
+        updateStartingDateInMachine();
     }
 
-    public void actualiseDateDeDeboutOperations(){
-        int dateDeDeboutActualised = 0;
+    public void updateStartingDateInMachine(){
+        int updatedStartingDate = 0;
         for(Operation operation:operations){
-            if(dateDeDeboutActualised < operation.getDateDeDebut()){
-                dateDeDeboutActualised = operation.getDateDeDebut();
+            if(updatedStartingDate < operation.getStartingDate()){
+                updatedStartingDate = operation.getStartingDate();
             }
-            operation.setDateDeDebut(dateDeDeboutActualised);
-            dateDeDeboutActualised += operation.getDuration();
+            operation.setStartingDate(updatedStartingDate);
+            updatedStartingDate += operation.getProcessingTime();
         }
     }
 

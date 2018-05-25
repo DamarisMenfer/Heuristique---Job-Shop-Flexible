@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Context implements Comparable<Context>, Cloneable {
+public class Context implements Cloneable {
 
     private ArrayList<Job> jobs;
     private ArrayList<Machine> machines;
@@ -59,11 +59,11 @@ public class Context implements Comparable<Context>, Cloneable {
     /*
      * Initial solution
      */
-    public void findSolution(){
+    public void initialSolution(){
         //chose machines to use.
-        choseMachinesRandom();
+        chooseMachinesRandomly();
         //Actualise datedeDebout plus tot Operation.
-        actualiseDateDeDebut();
+        updateStartingTime();
         //put choices in machine op list (ordered by date de debout plut tot).
         generateMachinesOperationsList();
         printContext();
@@ -72,6 +72,7 @@ public class Context implements Comparable<Context>, Cloneable {
         printSolution();
 
         createGraph();
+        System.out.println("check solution " + checkSolution());
         //test create graph
         System.out.println("graph : " +graph.toString());
 
@@ -80,51 +81,61 @@ public class Context implements Comparable<Context>, Cloneable {
         System.out.println(this.getTotalTime());
     }
 
-    private void choseMachinesRandom(){
+    private void chooseMachinesRandomly(){
         for(Job job:jobs){
             for (Operation operation:job.getOperations()){
                 HashMap<Machine,Integer> machinesOp = operation.getMachines();
                 Random rand = new Random();
                 int pos = rand.nextInt(machinesOp.size());
                 Machine machineChosed = (new ArrayList<Machine>(machinesOp.keySet())).get(pos);
-                operation.setChosedMachine(machineChosed);
+                operation.setChosenMachine(machineChosed);
             }
         }
     }
 
-    private void actualiseDateDeDebut(){
+    private void updateStartingTime(){
         for(Job job:jobs){
-            job.actualiseOperationsTime();
+            job.updateOperationTime();
         }
     }
 
     private void generateMachinesOperationsList(){
         for(Job job:jobs){
             for (Operation operation:job.getOperations()){
-                operation.getChosedMachine().addOperations(operation);
+                operation.getChosenMachine().addOperations(operation);
             }
         }
         for(Machine machine:machines){
-            machine.orderListOperations();
+            machine.sortOperationList();
         }
         for(Job job:jobs){
-            job.actualiseOperationsTime();
+            job.updateOperationTime();
         }
     }
 
-    private void proccess (){
+    private boolean process() {
 
-        //Take care: solution not possible. Gerer les conflits dans le ordenance des operations sur le machine.
-        //display solution as the form mentioned in the subject
-        //printSolution();
+        //TODO:Take care: Gerer les conflits dans le ordenance des operations sur le machine.
+
+        /*
+         * display solution as the form mentioned in the subject
+         */
+        printSolution();
         printContext();
+
         createGraph();
         //test create graph
         System.out.println(graph.toString());
-        printSolution();
-        //calculate total time
-        calculateTotalTime();
+
+        if (checkSolution()){
+            //calculate total time
+            calculateTotalTime();
+            System.out.println("----------------------total time "+this.getTotalTime());
+            return true;
+        }
         System.out.println(this.getTotalTime());
+        System.out.println("warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        return false;
     }
 
     //************************************************
@@ -136,8 +147,7 @@ public class Context implements Comparable<Context>, Cloneable {
     public boolean generateNeighbour(){
         System.out.println("------------generate Neighbour------------\n");
         Random rand = new Random();
-        //int choice = rand.nextInt(1);
-        int choice = 0;
+        int choice = rand.nextInt(1);
         switch (choice){
             case 1:
                 Operation opChanged = changeOneMachine();
@@ -146,19 +156,21 @@ public class Context implements Comparable<Context>, Cloneable {
                     return false;
                 }
                 else {
-                    actualiseDateDeDebut();
-                    actualiseMachinesOperationList(opChanged);
-                    proccess();
-                    return true;
+                    updateStartingTime();
+                    updateMachineOperationList(opChanged);
+                    return process();
                 }
-            default:
+            case 2:
                 Machine machineChoosed = chooseMachineToChange();
                 swapElementsInOperationList(machineChoosed);
-                proccess();
-                return true;
+                return process();
         }
+        return true;
     }
 
+    /*
+     * change chosen machine of a random operation
+     */
     private Operation changeOneMachine() {
         for(Job job:this.jobs){
             for (Operation operation:job.getOperations()){
@@ -166,8 +178,8 @@ public class Context implements Comparable<Context>, Cloneable {
                 Random rand = new Random();
                 int pos = rand.nextInt(machinesOp.size());
                 Machine machineChosed = (new ArrayList<Machine>(machinesOp.keySet())).get(pos);
-                if (operation.getChosedMachine() != machineChosed){
-                    operation.setChosedMachine(machineChosed);
+                if (operation.getChosenMachine() != machineChosed){
+                    operation.setChosenMachine(machineChosed);
                     return operation;
                 }
 
@@ -176,18 +188,18 @@ public class Context implements Comparable<Context>, Cloneable {
         return null;
     }
 
-    private void actualiseMachinesOperationList(Operation opChanged){
+    private void updateMachineOperationList(Operation changedOp){
         for(Machine machine:machines){
             for(Operation op:machine.getOperations()){
-                if (op == opChanged){
-                    machine.deleteOperationFromList(opChanged);
+                if (op == changedOp){
+                    machine.deleteOperationFromList(changedOp);
                 }
             }
         }
-        opChanged.getChosedMachine().addOperations(opChanged);
-        opChanged.getChosedMachine().orderListOperations();
+        changedOp.getChosenMachine().addOperations(changedOp);
+        changedOp.getChosenMachine().sortOperationList();
         for(Job job:jobs){
-            job.actualiseOperationsTime();
+            job.updateOperationTime();
         }
     }
 
@@ -214,11 +226,11 @@ public class Context implements Comparable<Context>, Cloneable {
         listOperations.set(posOperation, temp);
 
         for(Machine machine:machines){
-            machine.actualiseDateDeDeboutOperations();
+            machine.updateStartingDateInMachine();
         }
 
         for(Job job:jobs){
-            job.actualiseOperationsTime();
+            job.updateOperationTime();
         }
 
     }
@@ -232,8 +244,8 @@ public class Context implements Comparable<Context>, Cloneable {
     private void createGraph(){
         this.graph = new Graph();
         int id = 0;
-        Node nodeDebut = new Node (id, null, null);
-        Node nodeFin = new Node (-1, null, null);
+        Node nodeDebut = new Node (id,null);
+        Node nodeFin = new Node (-1,null);
 
         Node nodeStart;
         Node nodeEnd;
@@ -243,21 +255,21 @@ public class Context implements Comparable<Context>, Cloneable {
             for (int index = 0; index < job.getOperations().size(); index++){
                 Operation op = job.getOperations().get(index);
                 id += 1;
-                nodeEnd = new Node(id, job, op);
+                nodeEnd = new Node(id, op);
 
                 if (index == 0) {
                     edge = new Edge (nodeDebut, nodeEnd, 0);
                     nodeDebut.getNeighbour().add(edge);
                 }
                 if (index == job.getOperations().size() - 1){
-                    edge = new Edge (nodeEnd, nodeFin, nodeEnd.getOp().getDuration());
+                    edge = new Edge (nodeEnd, nodeFin, nodeEnd.getOp().getProcessingTime());
                     nodeEnd.getNeighbour().add(edge);
                     graph.addNode(nodeEnd);
                 }
                 else {
                     nodeStart = nodeEnd;
-                    nodeEnd = new Node(id + 1, job, job.getOperations().get(index + 1));
-                    edge = new Edge(nodeStart, nodeEnd, nodeStart.getOp().getDuration());
+                    nodeEnd = new Node(id + 1, job.getOperations().get(index + 1));
+                    edge = new Edge(nodeStart, nodeEnd, nodeStart.getOp().getProcessingTime());
                     nodeStart.getNeighbour().add(edge);
                     graph.addNode(nodeStart);
                 }
@@ -273,11 +285,37 @@ public class Context implements Comparable<Context>, Cloneable {
                 if (index < operations.size()-1){
                     nodeStart = graph.findNodeByOp(operations.get(index));
                     nodeEnd = graph.findNodeByOp(operations.get(index+1));
-                    edge = new Edge (nodeStart, nodeEnd, operations.get(index).getDuration());
+                    edge = new Edge (nodeStart, nodeEnd, operations.get(index).getProcessingTime());
                     nodeStart.getNeighbour().add(edge);
                 }
             }
         }
+    }
+
+    private boolean checkSolution (){
+        return feasibleSolution(this.graph.findNodeById(-1));
+    }
+
+    private boolean feasibleSolution(Node node) {
+        boolean res = true;
+        node.setChecking(true);
+        if (node.getId() == 0){
+            node.setChecking(false);
+            return true;
+        }
+        else {
+            ArrayList<Node> sourceNode = this.graph.findSource(node);
+            for (Node source : sourceNode) {
+                if (source.isChecking() == true){
+                    return false;
+                }
+                else {
+                    res = res && feasibleSolution(source);
+                }
+            }
+            node.setChecking(false);
+        }
+        return res;
     }
 
     private Integer calculateTime (Node node) {
@@ -292,14 +330,14 @@ public class Context implements Comparable<Context>, Cloneable {
         else {
             ArrayList<Node> sourceNode = graph.findSource(node);
             aux = sourceNode.get(0);
-            duration = sourceNode.get(0).findEdge(node).getDuration();
+            duration = sourceNode.get(0).findEdge(node).getProcessingTime();
             timeAux = calculateTime(aux);
 
             for (Node source : sourceNode) {
                 edge = source.findEdge(node);
-                if (calculateTime(source) + edge.getDuration() >= timeAux + duration){
+                if (calculateTime(source) + edge.getProcessingTime() >= timeAux + duration){
                     aux = source;
-                    duration = source.findEdge(node).getDuration();
+                    duration = source.findEdge(node).getProcessingTime();
                     timeAux = calculateTime(aux);
                 }
             }
@@ -323,9 +361,9 @@ public class Context implements Comparable<Context>, Cloneable {
             System.out.println("Job: "+job.getId());
             for(Operation operation:job.getOperations()){
                 System.out.println("Operation: " + operation.getId() +
-                        " DateDeDebout: " + operation.getDateDeDebut() +
-                        " Duration: " + operation.getDuration() +
-                        " Machine: " + operation.getChosedMachine().getId());
+                        " DateDeDebout: " + operation.getStartingDate() +
+                        " Duration: " + operation.getProcessingTime() +
+                        " Machine: " + operation.getChosenMachine().getId());
             }
         }
         for (Machine machine:machines){
@@ -346,7 +384,7 @@ public class Context implements Comparable<Context>, Cloneable {
         System.out.print("MA: (");
         for (Job job: jobs){
             for (Operation op: job.getOperations()) {
-                System.out.print(op.getChosedMachine().getId()+", ");
+                System.out.print(op.getChosenMachine().getId()+", ");
             }
             System.out.print("|");
         }
@@ -370,15 +408,7 @@ public class Context implements Comparable<Context>, Cloneable {
 
     }
 
-    @Override
-    public int compareTo(Context context) {
-        if (this.totalTime < context.totalTime){
-            return -1;
-        }
-        else{
-            return 0;
-        }
-    }
+    //************************************************
 
     @Override
     public Object clone(){
