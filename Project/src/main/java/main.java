@@ -26,10 +26,10 @@ public class main {
             neighbourContext = (Context) context.clone();
             if (!neighbourContext.generateNeighbour()){
                 System.out.println("fail check neighbour");
+                neighbourContext = (Context) context.clone();
                 continue_checking = false;
-                break;
             }
-            if (neighbourContext.getTotalTime() < context.getTotalTime()){
+            else if (neighbourContext.getTotalTime() < context.getTotalTime()){
                 System.out.println("found new neighbour");
                 System.out.println(neighbourContext.getGraph().toString());
                 System.out.println(neighbourContext.getTotalTime());
