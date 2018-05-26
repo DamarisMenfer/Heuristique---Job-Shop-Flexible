@@ -6,19 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class main {
-
-
     public static void main(String [] args) {
-
         Context context = new Context();
         initializeContext(context);
         context.initialSolution();
 
-        //TODO
-        //while(better)
-        //List[10] neighbours;
         Context neighbourContext = new Context(context.getJobs(), context.getMachines(), context.getGraph());
-        boolean continue_checking = true;
         Integer count = 0;
 
         while (count < 20) {
@@ -41,8 +34,6 @@ public class main {
         System.out.println(context.getGraph().toString());
         System.out.println(context.getTotalTime());
     }
-
-
 
     private static void initializeContext(Context context){
 

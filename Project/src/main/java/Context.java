@@ -7,6 +7,10 @@ public class Context implements Cloneable {
     private Graph graph;
     private Integer totalTime;
 
+    /***************************************************
+     * Construction
+     **************************************************/
+
     public Context() {
         this.jobs = new ArrayList<Job>();
         this.machines = new ArrayList<Machine>();
@@ -19,9 +23,11 @@ public class Context implements Cloneable {
         this.graph = initialGraph;
     }
 
-    /*
-     * setter getter
-     */
+
+    /***************************************************
+     * getter and setter
+     **************************************************/
+
     public ArrayList<Job> getJobs() {
         return jobs;
     }
@@ -54,11 +60,11 @@ public class Context implements Cloneable {
         return totalTime;
     }
 
-    //************************************************
 
-    /*
-     * Initial solution
-     */
+    /***************************************************
+     * initial solution
+     **************************************************/
+
     public void initialSolution(){
         do{
             reinitialize();
@@ -70,11 +76,24 @@ public class Context implements Cloneable {
             generateMachinesOperationsList();}
         while(!process());
     }
+
+    /*
+     * erase operation list executed by machine
+     * in case of fail to find initial solution
+     *
+     */
+
     public void reinitialize(){
         for(Machine machine: machines){
             machine.removeOperations();
         }
     }
+
+    /*
+     * randomly choose machine for each operation
+     *
+     */
+
     private void chooseMachinesRandomly(){
         for(Job job:jobs){
             for (Operation operation:job.getOperations()){
@@ -87,11 +106,22 @@ public class Context implements Cloneable {
         }
     }
 
+    /*
+     * update starting date of each operation
+     *
+     */
+
     private void updateStartingTime(){
         for(Job job:jobs){
             job.updateOperationTime();
         }
     }
+
+    /*
+     * add operation into list of its executed machine
+     * sort this list by its starting date
+     *
+     */
 
     private void generateMachinesOperationsList(){
         for(Job job:jobs){
@@ -107,16 +137,18 @@ public class Context implements Cloneable {
         }*/
     }
 
-    private boolean process() {
+    /*
+     * create graph based on operation and machine list
+     * check the feasibility of solution
+     * calculate total time of this solution
+     *
+     */
 
-        /*
-         * display solution as the form mentioned in the subject
-         */
+    private boolean process() {
         printSolution();
         printContext();
 
         createGraph();
-        //test create graph
         System.out.println(graph.toString());
 
         if (checkSolution()){
@@ -132,11 +164,9 @@ public class Context implements Cloneable {
         return false;
     }
 
-    //************************************************
-
-    /*
+    /***************************************************
      * generate Neighbour
-     */
+     **************************************************/
 
     public boolean generateNeighbour(){
         System.out.print("------------generate Neighbour ");
@@ -166,7 +196,9 @@ public class Context implements Cloneable {
 
     /*
      * change chosen machine of a random operation
+     *
      */
+
     private Operation changeOneMachine() {
         Random rand = new Random();
 
@@ -185,6 +217,12 @@ public class Context implements Cloneable {
         }
         return null;
     }
+
+    /*
+     * update operation in list of its executed machine
+     * after randomly choose this machine
+     *
+     */
 
     private void updateMachineOperationList(Operation changedOp){
         for(Machine machine:machines){
@@ -234,11 +272,9 @@ public class Context implements Cloneable {
 
     }
 
-    //************************************************
-
-    /*
-     * Graph structure
-     */
+    /***************************************************
+     * graph structure
+     **************************************************/
 
     private void createGraph(){
         this.graph = new Graph();
@@ -291,9 +327,17 @@ public class Context implements Cloneable {
         }
     }
 
+    /*
+     * check the feasibility of the whole graph
+     */
+
     private boolean checkSolution (){
         return feasibleSolution(this.graph.findNodeById(-1));
     }
+
+    /*
+     * check the feasibility of a node in graph
+     */
 
     private boolean feasibleSolution(Node node) {
         boolean res = true;
@@ -317,6 +361,9 @@ public class Context implements Cloneable {
         return res;
     }
 
+    /*
+     * calculate starting date of a node in graph
+     */
     private Integer calculateTime (Node node) {
         Node aux;
         Integer timeAux;
@@ -347,15 +394,20 @@ public class Context implements Cloneable {
         }
     }
 
+    /*
+     * calculate the total time of whole graph
+     */
     private void calculateTotalTime() {
         this.totalTime = calculateTime(graph.findNodeById(-1));
         //System.out.println ("total time: " + this.totalTime);
     }
 
-    //************************************************
+    /***************************************************
+     * print function
+     **************************************************/
 
     /*
-     * Print function
+     * debugger
      */
 
     public void printContext(){
@@ -376,6 +428,10 @@ public class Context implements Cloneable {
             }
         }
     }
+
+    /*
+     * display solution as the form mentioned in the subject
+     */
 
     public void printSolution(){
         printMachineAssignement();
@@ -409,9 +465,7 @@ public class Context implements Cloneable {
         System.out.print(")\n");
 
     }
-
-    //************************************************
-
+    
     @Override
     public Object clone(){
         Object o = null;
@@ -423,5 +477,4 @@ public class Context implements Cloneable {
         return o;
     }
 
-    //************************************************
 }
