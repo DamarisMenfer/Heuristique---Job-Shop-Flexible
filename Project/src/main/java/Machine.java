@@ -20,6 +20,10 @@ public class Machine {
         this.operations.add(operations);
     }
 
+    public void removeOperations(){
+        operations = new ArrayList<Operation>();
+    }
+
     public int getId() {
         return id;
     }
