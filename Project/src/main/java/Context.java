@@ -60,27 +60,21 @@ public class Context implements Cloneable {
      * Initial solution
      */
     public void initialSolution(){
-        //chose machines to use.
-        chooseMachinesRandomly();
-        //Actualise datedeDebout plus tot Operation.
-        updateStartingTime();
-        //put choices in machine op list (ordered by date de debout plut tot).
-        generateMachinesOperationsList();
-        printContext();
-        //Take care: solution not possible. Gerer les conflits dans le ordenance des operations sur le machine.
-        //display solution as the form mentioned in the subject
-        printSolution();
-
-        createGraph();
-        System.out.println("check solution " + checkSolution());
-        //test create graph
-        System.out.println("graph : " +graph.toString());
-
-        //calculate total time
-        calculateTotalTime();
-        System.out.println(this.getTotalTime());
+        do{
+            reinitialize();
+            //chose machines to use.
+            chooseMachinesRandomly();
+            //Update starting time of operation.
+            //updateStartingTime();
+            //put choices in machine op list (ordered by date de debut plus tot).
+            generateMachinesOperationsList();}
+        while(!process());
     }
-
+    public void reinitialize(){
+        for(Machine machine: machines){
+            machine.removeOperations();
+        }
+    }
     private void chooseMachinesRandomly(){
         for(Job job:jobs){
             for (Operation operation:job.getOperations()){
@@ -108,14 +102,12 @@ public class Context implements Cloneable {
         for(Machine machine:machines){
             machine.sortOperationList();
         }
-        for(Job job:jobs){
+        /*for(Job job:jobs){
             job.updateOperationTime();
-        }
+        }*/
     }
 
     private boolean process() {
-
-        //TODO:Take care: Gerer les conflits dans le ordenance des operations sur le machine.
 
         /*
          * display solution as the form mentioned in the subject
@@ -131,8 +123,10 @@ public class Context implements Cloneable {
             //calculate total time
             calculateTotalTime();
             System.out.println("----------------------total time "+this.getTotalTime());
+            System.out.println(graph.toString());
             return true;
         }
+        System.out.println("warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println(this.getTotalTime());
         System.out.println("warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         return false;
@@ -145,18 +139,20 @@ public class Context implements Cloneable {
      */
 
     public boolean generateNeighbour(){
-        System.out.println("------------generate Neighbour------------\n");
+        System.out.print("------------generate Neighbour");
         Random rand = new Random();
-        int choice = rand.nextInt(1);
+        //int choice = rand.nextInt(1);
+        int choice = 1;
         switch (choice){
             case 1:
+                System.out.println("using change machine");
                 Operation opChanged = changeOneMachine();
                 if(opChanged == null){
                     System.out.print("Not a neighbour");
                     return false;
                 }
                 else {
-                    updateStartingTime();
+                    //updateStartingTime();
                     updateMachineOperationList(opChanged);
                     return process();
                 }
@@ -193,14 +189,15 @@ public class Context implements Cloneable {
             for(Operation op:machine.getOperations()){
                 if (op == changedOp){
                     machine.deleteOperationFromList(changedOp);
+                    break;
                 }
             }
         }
         changedOp.getChosenMachine().addOperations(changedOp);
         changedOp.getChosenMachine().sortOperationList();
-        for(Job job:jobs){
+        /*for(Job job:jobs){
             job.updateOperationTime();
-        }
+        }*/
     }
 
     private Machine chooseMachineToChange(){
@@ -341,6 +338,9 @@ public class Context implements Cloneable {
                     timeAux = calculateTime(aux);
                 }
             }
+            if (node.getId() != -1) {
+                node.getOp().setStartingDate(timeAux+duration);
+            }
             return timeAux + duration;
         }
     }
@@ -361,8 +361,8 @@ public class Context implements Cloneable {
             System.out.println("Job: "+job.getId());
             for(Operation operation:job.getOperations()){
                 System.out.println("Operation: " + operation.getId() +
-                        " DateDeDebout: " + operation.getStartingDate() +
-                        " Duration: " + operation.getProcessingTime() +
+                        " Starting time: " + operation.getStartingDate() +
+                        " Processing time: " + operation.getProcessingTime() +
                         " Machine: " + operation.getChosenMachine().getId());
             }
         }
