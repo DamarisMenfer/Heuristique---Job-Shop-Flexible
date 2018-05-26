@@ -21,13 +21,13 @@ public class main {
         boolean continue_checking = true;
         Integer count = 0;
 
-        while (continue_checking && count < 20) {
+        while (count < 20) {
             count ++;
+            System.out.println(count);
             neighbourContext = (Context) context.clone();
             if (!neighbourContext.generateNeighbour()){
-                System.out.println("fail check neighbour");
+                System.out.println("fail check neighbour ");
                 neighbourContext = (Context) context.clone();
-                continue_checking = false;
             }
             else if (neighbourContext.getTotalTime() < context.getTotalTime()){
                 System.out.println("found new neighbour");

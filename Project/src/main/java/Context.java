@@ -139,7 +139,7 @@ public class Context implements Cloneable {
      */
 
     public boolean generateNeighbour(){
-        System.out.print("------------generate Neighbour");
+        System.out.print("------------generate Neighbour ");
         Random rand = new Random();
         //int choice = rand.nextInt(1);
         int choice = 1;
@@ -148,7 +148,7 @@ public class Context implements Cloneable {
                 System.out.println("using change machine");
                 Operation opChanged = changeOneMachine();
                 if(opChanged == null){
-                    System.out.print("Not a neighbour");
+                    System.out.print("Not a neighbour ");
                     return false;
                 }
                 else {
@@ -168,18 +168,20 @@ public class Context implements Cloneable {
      * change chosen machine of a random operation
      */
     private Operation changeOneMachine() {
-        for(Job job:this.jobs){
-            for (Operation operation:job.getOperations()){
-                HashMap<Machine,Integer> machinesOp = operation.getMachines();
-                Random rand = new Random();
-                int pos = rand.nextInt(machinesOp.size());
-                Machine machineChosed = (new ArrayList<Machine>(machinesOp.keySet())).get(pos);
-                if (operation.getChosenMachine() != machineChosed){
-                    operation.setChosenMachine(machineChosed);
-                    return operation;
-                }
+        Random rand = new Random();
 
-            }
+        int randomJob = rand.nextInt(jobs.size());
+        Job job = jobs.get(randomJob);
+
+        int randomOp = rand.nextInt(job.getOperations().size());
+        Operation operation =  job.getOperations().get(randomOp);
+        HashMap<Machine,Integer> machinesOp = operation.getMachines();
+
+        int pos = rand.nextInt(machinesOp.size());
+        Machine machineChosed = (new ArrayList<Machine>(machinesOp.keySet())).get(pos);
+        if (operation.getChosenMachine() != machineChosed){
+            operation.setChosenMachine(machineChosed);
+            return operation;
         }
         return null;
     }
