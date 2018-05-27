@@ -68,11 +68,8 @@ public class Context implements Cloneable {
     public void initialSolution(){
         do{
             reinitialize();
-            //chose machines to use.
             chooseMachinesRandomly();
-            //Update starting time of operation.
             //updateStartingTime();
-            //put choices in machine op list (ordered by date de debut plus tot).
             generateMachinesOperationsList();}
         while(!process());
     }
@@ -146,21 +143,17 @@ public class Context implements Cloneable {
 
     private boolean process() {
         printSolution();
-        printContext();
+        //printContext();
 
         createGraph();
-        System.out.println(graph.toString());
+        //System.out.println(graph.toString());
 
         if (checkSolution()){
-            //calculate total time
             calculateTotalTime();
             System.out.println("----------------------total time "+this.getTotalTime());
-            System.out.println(graph.toString());
             return true;
         }
-        System.out.println("warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        System.out.println(this.getTotalTime());
-        System.out.println("warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        System.out.println("\nwarning!: solution isn't feasible, repeat process\n");
         return false;
     }
 
@@ -169,16 +162,14 @@ public class Context implements Cloneable {
      **************************************************/
 
     public boolean generateNeighbour(){
-        System.out.print("------------generate Neighbour ");
+        System.out.println("------------generate Neighbour------------");
         Random rand = new Random();
-        //int choice = rand.nextInt(1);
-        int choice = 1;
+        int choice = rand.nextInt(2);
         switch (choice){
-            case 1:
+            case 0:
                 System.out.println("using change machine");
                 Operation opChanged = changeOneMachine();
                 if(opChanged == null){
-                    System.out.print("Not a neighbour ");
                     return false;
                 }
                 else {
@@ -186,12 +177,13 @@ public class Context implements Cloneable {
                     updateMachineOperationList(opChanged);
                     return process();
                 }
-            case 2:
+            case 1:
+                System.out.println("using swap operation in machine list");
                 Machine machineChoosed = chooseMachineToChange();
                 swapElementsInOperationList(machineChoosed);
                 return process();
         }
-        return true;
+        return false;
     }
 
     /*
@@ -465,7 +457,7 @@ public class Context implements Cloneable {
         System.out.print(")\n");
 
     }
-    
+
     @Override
     public Object clone(){
         Object o = null;
