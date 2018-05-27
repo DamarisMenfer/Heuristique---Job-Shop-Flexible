@@ -234,8 +234,14 @@ public class Context implements Cloneable {
 
     private Machine chooseMachineToChange(){
         Random rand = new Random();
-        int posMachine = rand.nextInt(machines.size());
-        return machines.get(posMachine);
+        int posMachine;
+        Machine machine;
+        do {
+            posMachine = rand.nextInt(machines.size());
+            machine = machines.get(posMachine);
+        }
+        while (machine.getOperations().size() <= 1);
+        return machine;
     }
 
     //TODO error
