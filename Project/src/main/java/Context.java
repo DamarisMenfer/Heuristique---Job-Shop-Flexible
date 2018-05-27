@@ -142,8 +142,8 @@ public class Context implements Cloneable {
      */
 
     private boolean process() {
-        printSolution();
-        //printContext();
+        //printSolution();
+        printContext();
 
         createGraph();
         //System.out.println(graph.toString());
@@ -244,29 +244,27 @@ public class Context implements Cloneable {
         return machine;
     }
 
-    //TODO error
     private void swapElementsInOperationList(Machine machineSwap){
 
         Random rand = new Random();
         ArrayList<Operation> listOperations = machineSwap.getOperations();
         int posOperation = rand.nextInt(listOperations.size());
-        if(posOperation == 0){
-            posOperation++;
+        Operation temp = listOperations.get(posOperation);
+        if (posOperation == 0) {
+            listOperations.set(posOperation, listOperations.get(posOperation+1));
+            listOperations.set(posOperation+1, temp);
         }
-        else if(posOperation == listOperations.size()){
-            posOperation--;
+        else{
+            listOperations.set(posOperation, listOperations.get(posOperation-1));
+            listOperations.set(posOperation-1, temp);
         }
-        Operation temp = listOperations.get(posOperation-1);
-        listOperations.set(posOperation-1, listOperations.get(posOperation));
-        listOperations.set(posOperation, temp);
-
-        for(Machine machine:machines){
+        /*for(Machine machine:machines){
             machine.updateStartingDateInMachine();
         }
 
         for(Job job:jobs){
             job.updateOperationTime();
-        }
+        }*/
 
     }
 
