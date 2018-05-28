@@ -5,7 +5,7 @@ public class Operation implements Comparable<Operation>{
     private int id;
     private int idJob;
 
-    private int startingDate;                            //Plus tôt (dependant du choix des machines).
+    private int startingDate;
 
     private LinkedHashMap<Machine,Integer> machines;
 

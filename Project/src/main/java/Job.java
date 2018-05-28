@@ -27,14 +27,4 @@ public class Job {
         return String.valueOf(id);
     }
 
-    public void updateOperationTime(){
-        int startingTimeOfNextOperation = operations.get(0).getStartingDate();
-        for(Operation operation:operations){
-            if(operation.getStartingDate() < startingTimeOfNextOperation) {
-                operation.setStartingDate(startingTimeOfNextOperation);
-            }
-            startingTimeOfNextOperation = operation.getStartingDate() + operation.getProcessingTime();
-        }
-    }
-
 }

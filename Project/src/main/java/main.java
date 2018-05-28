@@ -2,36 +2,57 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class main {
     public static void main(String [] args) {
-        Context context = new Context();
-        initializeContext(context);
-        context.initialSolution();
 
-        Context neighbourContext = new Context(context.getJobs(), context.getMachines(), context.getGraph());
-        Integer count = 0;
+        final int numberOfNeighbours = 15;
+        final int numberOfTrials = 4;
+        int notABetterSolution = 0;
+        int neighbourTime;
 
-        while (count < 20) {
-            count ++;
-            System.out.println(count);
-            neighbourContext = (Context) context.clone();
-            if (!neighbourContext.generateNeighbour()){
-                System.out.println("fail check neighbour ");
-                neighbourContext = (Context) context.clone();
+        HashMap<Integer, Context> neighbours;
+        List timeKeys;
+        Context neighbourContext;
+
+        Context contextSolution = new Context();
+        initializeContext(contextSolution);
+        contextSolution.initialSolution();
+
+        while (notABetterSolution < numberOfTrials){
+
+            neighbours = new HashMap<Integer,Context>();
+            timeKeys = new ArrayList();
+
+            for (int i = 0; i < numberOfNeighbours;){
+                neighbourContext = (Context) contextSolution.clone();
+                if(neighbourContext.generateNeighbour()){
+                    i++;
+                    neighbourTime = neighbourContext.getTotalTime();
+                    neighbours.put(neighbourTime, neighbourContext);
+                    timeKeys.add(neighbourTime);
+                }
             }
-            else if (neighbourContext.getTotalTime() < context.getTotalTime()){
-                System.out.println("found new neighbour");
-                neighbourContext.printSolution();
-                System.out.println(neighbourContext.getTotalTime());
-                context = (Context) neighbourContext.clone();
+            Collections.sort(timeKeys);
+            Context betterNeighbour = neighbours.get(timeKeys.get(0));
+            if(betterNeighbour.getTotalTime() < contextSolution.getTotalTime()){
+                contextSolution = (Context) betterNeighbour.clone();
+                System.out.println("---------found new solution");
+                contextSolution.printSolution();
+                System.out.println("----------------------total time "+contextSolution.getTotalTime()+"\n");
+                notABetterSolution = 0;
+            }else {
+                notABetterSolution++;
             }
         }
-        System.out.println("*****************************************");
-        neighbourContext.printSolution();
-        System.out.println(context.getTotalTime());
+
+        System.out.println("\n*****************************************");
+        System.out.println("************ FINAL SOLUTION *************");
+        System.out.println("*****************************************\n");
+        contextSolution.printSolution();
+        contextSolution.printContext();
+        System.out.println(contextSolution.getTotalTime());
     }
 
     private static void initializeContext(Context context){

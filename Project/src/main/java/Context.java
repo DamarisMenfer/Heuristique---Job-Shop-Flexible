@@ -17,20 +17,9 @@ public class Context implements Cloneable {
         this.graph = new Graph();
     }
 
-    public Context(ArrayList<Job> initialJobs, ArrayList<Machine> initialMachines, Graph initialGraph) {
-        this.jobs = initialJobs;
-        this.machines = initialMachines;
-        this.graph = initialGraph;
-    }
-
-
     /***************************************************
      * getter and setter
      **************************************************/
-
-    public ArrayList<Job> getJobs() {
-        return jobs;
-    }
 
     public Job getJobById(int id){
         return jobs.get(id-1);
@@ -40,20 +29,12 @@ public class Context implements Cloneable {
         this.jobs.add(job);
     }
 
-    public ArrayList<Machine> getMachines() {
-        return machines;
-    }
-
     public Machine getMachineById(int id){
         return machines.get(id-1);
     }
 
     public void addMachines(Machine machine) {
         this.machines.add(machine);
-    }
-
-    public Graph getGraph() {
-        return this.graph;
     }
 
     public Integer getTotalTime() {
@@ -69,7 +50,6 @@ public class Context implements Cloneable {
         do{
             reinitialize();
             chooseMachinesRandomly();
-            //updateStartingTime();
             generateMachinesOperationsList();}
         while(!process());
     }
@@ -104,17 +84,6 @@ public class Context implements Cloneable {
     }
 
     /*
-     * update starting date of each operation
-     *
-     */
-
-    private void updateStartingTime(){
-        for(Job job:jobs){
-            job.updateOperationTime();
-        }
-    }
-
-    /*
      * add operation into list of its executed machine
      * sort this list by its starting date
      *
@@ -129,9 +98,6 @@ public class Context implements Cloneable {
         for(Machine machine:machines){
             machine.sortOperationList();
         }
-        /*for(Job job:jobs){
-            job.updateOperationTime();
-        }*/
     }
 
     /*
@@ -142,18 +108,15 @@ public class Context implements Cloneable {
      */
 
     private boolean process() {
-        //printSolution();
-        printContext();
-
         createGraph();
-        //System.out.println(graph.toString());
+        printSolution();
 
         if (checkSolution()){
             calculateTotalTime();
-            System.out.println("----------------------total time "+this.getTotalTime());
+            System.out.println("----------------------total time "+this.getTotalTime()+"\n");
             return true;
         }
-        System.out.println("\nwarning!: solution isn't feasible, repeat process\n");
+        System.out.println("---------solution isn't feasible\n\n");
         return false;
     }
 
@@ -162,23 +125,24 @@ public class Context implements Cloneable {
      **************************************************/
 
     public boolean generateNeighbour(){
-        System.out.println("------------generate Neighbour------------");
         Random rand = new Random();
         int choice = rand.nextInt(2);
         switch (choice){
             case 0:
-                System.out.println("using change machine");
+
                 Operation opChanged = changeOneMachine();
                 if(opChanged == null){
                     return false;
                 }
                 else {
-                    //updateStartingTime();
+                    System.out.print("------generate Neighbour ");
+                    System.out.println("using change machine------------------");
                     updateMachineOperationList(opChanged);
                     return process();
                 }
             case 1:
-                System.out.println("using swap operation in machine list");
+                System.out.print("------generate Neighbour ");
+                System.out.println("using swap operation in machine list--");
                 Machine machineChoosed = chooseMachineToChange();
                 swapElementsInOperationList(machineChoosed);
                 return process();
@@ -227,9 +191,6 @@ public class Context implements Cloneable {
         }
         changedOp.getChosenMachine().addOperations(changedOp);
         changedOp.getChosenMachine().sortOperationList();
-        /*for(Job job:jobs){
-            job.updateOperationTime();
-        }*/
     }
 
     private Machine chooseMachineToChange(){
@@ -258,14 +219,6 @@ public class Context implements Cloneable {
             listOperations.set(posOperation, listOperations.get(posOperation-1));
             listOperations.set(posOperation-1, temp);
         }
-        /*for(Machine machine:machines){
-            machine.updateStartingDateInMachine();
-        }
-
-        for(Job job:jobs){
-            job.updateOperationTime();
-        }*/
-
     }
 
     /***************************************************
