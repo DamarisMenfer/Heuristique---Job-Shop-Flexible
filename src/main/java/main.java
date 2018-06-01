@@ -57,13 +57,17 @@ public class main {
 
     private static void initializeContext(Context context){
 
-            // The name of the file to open.
-            String fileName = "Exemple TP.txt";
+        // The name of the file to open.
+        String fileName = "exemple.txt";
 
-            // This will reference one line at a time
-            String line = null;
+        // This will reference one line at a time
+        String line = null;
 
-            try {
+        int countLine = 0;
+        int itemIndex;
+
+
+        try {
                 // FileReader reads text files in the default encoding.
                 FileReader fileReader =
                         new FileReader(fileName);
@@ -71,8 +75,6 @@ public class main {
                 // Always wrap FileReader in BufferedReader.
                 BufferedReader bufferedReader =
                         new BufferedReader(fileReader);
-
-                int countLine = 0;
 
                 while((line = bufferedReader.readLine()) != null) {
                     if(!line.equals("")){
@@ -88,9 +90,9 @@ public class main {
                             }
                         }
                         else {
-                            int itemIndex = 0;
+                            itemIndex = 0;
                             List<String> items = Arrays.asList(line.split("\t"));
-
+                            System.out.println(items.toString());
                             int nbOp = Integer.parseInt(items.get(itemIndex));
 
                             for(int i = 0; i < nbOp; i++){
