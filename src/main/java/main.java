@@ -16,8 +16,13 @@ public class main {
         List timeKeys;
         Context neighbourContext;
 
+        if (args.length != 1) {
+            System.err.println("usage: java main path_to_test_file");
+            System.exit(1);
+        }
+
         Context contextSolution = new Context();
-        initializeContext(contextSolution);
+        initializeContext(contextSolution, args[0]);
         contextSolution.initialSolution();
 
         while (notABetterSolution < numberOfTrials){
@@ -55,13 +60,10 @@ public class main {
         System.out.println(contextSolution.getTotalTime());
     }
 
-    private static void initializeContext(Context context){
-
-        // The name of the file to open.
-        String fileName = "exemple.txt";
+    private static void initializeContext(Context context, String path){
 
         // This will reference one line at a time
-        String line = null;
+        String line;
 
         int countLine = 0;
         int itemIndex;
@@ -70,7 +72,7 @@ public class main {
         try {
                 // FileReader reads text files in the default encoding.
                 FileReader fileReader =
-                        new FileReader(fileName);
+                        new FileReader(path);
 
                 // Always wrap FileReader in BufferedReader.
                 BufferedReader bufferedReader =
@@ -121,12 +123,12 @@ public class main {
             catch(FileNotFoundException ex) {
                 System.out.println(
                         "Unable to open file '" +
-                                fileName + "'");
+                                path + "'");
             }
             catch(IOException ex) {
                 System.out.println(
                         "Error reading file '"
-                                + fileName + "'");
+                                + path + "'");
             }
             System.out.println("Context initialized.");
     }
