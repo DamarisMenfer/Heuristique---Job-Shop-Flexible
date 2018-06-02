@@ -80,8 +80,9 @@ public class main {
 
                 while((line = bufferedReader.readLine()) != null) {
                     if(!line.equals("")){
+                        line = line.trim();
                         if(countLine == 0){
-                            List<String> items = Arrays.asList(line.split("\t"));
+                            List<String> items = Arrays.asList(line.split(" +"));
                             for(int i = 0; i < Integer.parseInt(items.get(0)); i++){
                                 Job newJob = new Job(i+1);
                                 context.addJobs(newJob);
@@ -93,7 +94,7 @@ public class main {
                         }
                         else {
                             itemIndex = 0;
-                            List<String> items = Arrays.asList(line.split("\t"));
+                            List<String> items = Arrays.asList(line.split(" +"));
                             System.out.println(items.toString());
                             int nbOp = Integer.parseInt(items.get(itemIndex));
 
