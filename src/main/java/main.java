@@ -23,7 +23,10 @@ public class main {
 
         Context contextSolution = new Context();
         initializeContext(contextSolution, args[0]);
-        contextSolution.initialSolution();
+        if (!contextSolution.initialSolution()){
+            System.err.println("Problem occurred: cant find initial solution, pls try again");
+            System.exit(1);
+        }
 
         while (notABetterSolution < numberOfTrials){
 

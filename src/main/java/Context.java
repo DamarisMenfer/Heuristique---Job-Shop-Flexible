@@ -46,12 +46,24 @@ public class Context implements Cloneable {
      * initial solution
      **************************************************/
 
-    public void initialSolution(){
+    public boolean initialSolution(){
+        int nbOfTrials = 0;
+        boolean solutionAcceptable;
         do{
+            nbOfTrials ++;
             reinitialize();
             chooseMachinesRandomly();
-            generateMachinesOperationsList();}
-        while(!process());
+            generateMachinesOperationsList();
+            solutionAcceptable = process();
+        }
+        while(!solutionAcceptable && nbOfTrials < 10);
+        if (solutionAcceptable){
+            return true;
+        }
+        if (nbOfTrials >= 10){
+            return false;
+        }
+        return true;
     }
 
     /*
