@@ -7,7 +7,7 @@ import java.util.*;
 public class main {
     public static void main(String [] args) {
 
-        final int numberOfNeighbours = 15;
+        final int numberOfNeighbours = 10;
         final int numberOfTrials = 4;
         int notABetterSolution = 0;
         int neighbourTime;
@@ -23,25 +23,25 @@ public class main {
 
         Context contextSolution = new Context();
         initializeContext(contextSolution, args[0]);
-        if (!contextSolution.initialSolution()){
-            System.err.println("Problem occurred: cant find initial solution, pls try again");
-            System.exit(1);
-        }
+        contextSolution.initialSolution();
+
+        System.out.print("Searching solutions...\n");
+
 
         while (notABetterSolution < numberOfTrials){
 
             neighbours = new HashMap<Integer,Context>();
             timeKeys = new ArrayList();
 
-            for (int i = 0; i < numberOfNeighbours;){
+            for (int i = 0; i < numberOfNeighbours;i++){
                 neighbourContext = (Context) contextSolution.clone();
-                if(neighbourContext.generateNeighbour()){
-                    i++;
-                    neighbourTime = neighbourContext.getTotalTime();
-                    neighbours.put(neighbourTime, neighbourContext);
-                    timeKeys.add(neighbourTime);
-                }
+                neighbourContext.generateNeighbour();
+                neighbourTime = neighbourContext.getTotalTime();
+                neighbours.put(neighbourTime, neighbourContext);
+                timeKeys.add(neighbourTime);
+
             }
+
             Collections.sort(timeKeys);
             Context betterNeighbour = neighbours.get(timeKeys.get(0));
             if(betterNeighbour.getTotalTime() < contextSolution.getTotalTime()){
@@ -50,9 +50,10 @@ public class main {
                 contextSolution.printSolution();
                 System.out.println("----------------------total time "+contextSolution.getTotalTime()+"\n");
                 notABetterSolution = 0;
-            }else {
+            }else if (contextSolution.isPossibleSolution()) {
                 notABetterSolution++;
             }
+
         }
 
         System.out.println("\n*****************************************");
@@ -98,7 +99,6 @@ public class main {
                         else {
                             itemIndex = 0;
                             List<String> items = Arrays.asList(line.split(" +"));
-                            System.out.println(items.toString());
                             int nbOp = Integer.parseInt(items.get(itemIndex));
 
                             for(int i = 0; i < nbOp; i++){

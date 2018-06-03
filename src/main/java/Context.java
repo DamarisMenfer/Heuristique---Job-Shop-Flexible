@@ -7,6 +7,8 @@ public class Context implements Cloneable {
     private Graph graph;
     private Integer totalTime;
 
+    private boolean possibleSolution;
+
     /***************************************************
      * Construction
      **************************************************/
@@ -15,6 +17,7 @@ public class Context implements Cloneable {
         this.jobs = new ArrayList<Job>();
         this.machines = new ArrayList<Machine>();
         this.graph = new Graph();
+        totalTime = 10000000;
     }
 
     /***************************************************
@@ -41,28 +44,20 @@ public class Context implements Cloneable {
         return totalTime;
     }
 
+    public boolean isPossibleSolution() {
+        return possibleSolution;
+    }
 
     /***************************************************
      * initial solution
      **************************************************/
 
     public boolean initialSolution(){
-        int nbOfTrials = 0;
-        boolean solutionAcceptable;
-        do{
-            nbOfTrials ++;
-            reinitialize();
-            chooseMachinesRandomly();
-            generateMachinesOperationsList();
-            solutionAcceptable = process();
-        }
-        while(!solutionAcceptable && nbOfTrials < 10);
-        if (solutionAcceptable){
-            return true;
-        }
-        if (nbOfTrials >= 10){
-            return false;
-        }
+
+        chooseMachinesRandomly();
+        generateMachinesOperationsList();
+        process();
+
         return true;
     }
 
@@ -121,14 +116,16 @@ public class Context implements Cloneable {
 
     private boolean process() {
         createGraph();
-        printSolution();
+        //printSolution();
 
         if (checkSolution()){
             calculateTotalTime();
-            System.out.println("----------------------total time "+this.getTotalTime()+"\n");
+            possibleSolution = true;
+            //System.out.println("----------------------total time "+this.getTotalTime()+"\n");
             return true;
         }
-        System.out.println("---------solution isn't feasible\n\n");
+        possibleSolution = false;
+        //System.out.println("---------solution isn't feasible\n\n");
         return false;
     }
 
@@ -147,14 +144,14 @@ public class Context implements Cloneable {
                     return false;
                 }
                 else {
-                    System.out.print("------generate Neighbour ");
-                    System.out.println("using change machine------------------");
+                    //System.out.print("------generate Neighbour ");
+                    //System.out.println("using change machine------------------");
                     updateMachineOperationList(opChanged);
                     return process();
                 }
             case 1:
-                System.out.print("------generate Neighbour ");
-                System.out.println("using swap operation in machine list--");
+                //System.out.print("------generate Neighbour ");
+                //System.out.println("using swap operation in machine list--");
                 Machine machineChoosed = chooseMachineToChange();
                 swapElementsInOperationList(machineChoosed);
                 return process();
@@ -293,6 +290,7 @@ public class Context implements Cloneable {
      */
 
     private boolean checkSolution (){
+
         return feasibleSolution(this.graph.findNodeById(-1));
     }
 
